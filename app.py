@@ -19,14 +19,14 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
-st.set_page_config(page_title="Medical Impact · Service Quality",
+st.set_page_config(page_title="Impacto Médico · Calidad del Servicio",
                    page_icon="✚", layout="wide", initial_sidebar_state="expanded")
 
 # ---- columns ----
 FACTORS = ['F1_Tangibilidad', 'F2_Fiabilidad', 'F3_CapRespuesta', 'F4_Seguridad', 'F5_Empatia']
-FACTOR_LABEL = {'F1_Tangibilidad': 'Tangibles', 'F2_Fiabilidad': 'Reliability',
-                'F3_CapRespuesta': 'Responsiveness', 'F4_Seguridad': 'Assurance',
-                'F5_Empatia': 'Empathy'}
+FACTOR_LABEL = {'F1_Tangibilidad': 'Tangibilidad', 'F2_Fiabilidad': 'Fiabilidad',
+                'F3_CapRespuesta': 'Cap. Respuesta', 'F4_Seguridad': 'Seguridad',
+                'F5_Empatia': 'Empatía'}
 CAT_FEATURES = ['region', 'escolaridad', 'genero', 'Estado_Comunidad']
 TARGET = 'satisfaccion_general'
 
@@ -176,34 +176,34 @@ section[data-testid="stSidebar"] [data-testid="stMetricValue"] {{ color:#fff; fo
 
 # ---- sidebar: data + filters ----
 st.sidebar.markdown("<div class='side-brand'><div class='dot'>✚</div>"
-    "<div><div class='n'>Medical Impact</div>"
-    "<div style='font-size:11px;color:#C98A92'>Service Quality</div></div></div>", unsafe_allow_html=True)
+    "<div><div class='n'>Impacto Médico</div>"
+    "<div style='font-size:11px;color:#C98A92'>Calidad del Servicio</div></div></div>", unsafe_allow_html=True)
 
-uploaded = st.sidebar.file_uploader("Data source · medical_impact.xlsx", type=['xlsx'])
+uploaded = st.sidebar.file_uploader("Fuente de datos · medical_impact.xlsx", type=['xlsx'])
 if uploaded is not None:
     df = pd.read_excel(uploaded)
 else:
     try:
         df = load_local()
     except FileNotFoundError:
-        st.markdown("<div class='hero'><div class='eyebrow'>Medical Impact</div>"
-            "<h1>Service Quality Intelligence</h1><p>Upload <b>medical_impact.xlsx</b> "
-            "in the sidebar to begin, or place it next to app.py.</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='hero'><div class='eyebrow'>Impacto Médico</div>"
+            "<h1>Inteligencia de Calidad del Servicio</h1><p>Sube <b>medical_impact.xlsx</b> "
+            "en la barra lateral para comenzar, o colócalo junto a app.py.</p></div>", unsafe_allow_html=True)
         st.stop()
 
 model, metrics = train_model(df)
 
-st.sidebar.markdown("<div class='mini'>Filters</div>", unsafe_allow_html=True)
-states = st.sidebar.multiselect("State", sorted(df.Estado_Comunidad.dropna().unique()),
+st.sidebar.markdown("<div class='mini'>Filtros</div>", unsafe_allow_html=True)
+states = st.sidebar.multiselect("Estado", sorted(df.Estado_Comunidad.dropna().unique()),
                                 sorted(df.Estado_Comunidad.dropna().unique()))
-comms  = st.sidebar.multiselect("Community", sorted(df.comunidad.dropna().unique()),
+comms  = st.sidebar.multiselect("Comunidad", sorted(df.comunidad.dropna().unique()),
                                 sorted(df.comunidad.dropna().unique()))
-regs   = st.sidebar.multiselect("Region", sorted(df.region.dropna().unique()),
+regs   = st.sidebar.multiselect("Región", sorted(df.region.dropna().unique()),
                                 sorted(df.region.dropna().unique()))
 
 f = df[df.Estado_Comunidad.isin(states) & df.comunidad.isin(comms) & df.region.isin(regs)]
 
-st.sidebar.markdown("<div class='mini'>Model · in-sample (no split)</div>", unsafe_allow_html=True)
+st.sidebar.markdown("<div class='mini'>Modelo · en muestra (sin división)</div>", unsafe_allow_html=True)
 sm1, sm2, sm3 = st.sidebar.columns(3)
 sm1.metric("R²", f"{metrics['r2']:.3f}")
 sm2.metric("MAE", s(metrics['mae']))
@@ -213,19 +213,19 @@ sm3.metric("RMSE", s(metrics['rmse']))
 _now = _dt.datetime.now().strftime("%b %d, %Y · %H:%M")
 st.markdown(f"""
 <div class="hero">
-  <div class="brand"><span class="dot">✚</span> Medical Impact</div>
-  <div class="eyebrow">Healthcare · SERVQUAL Service-Quality Report</div>
-  <h1>Community Health Brigade — Service Quality Intelligence</h1>
-  <p>Patient-reported service quality across community health brigades, measured on the five
-     SERVQUAL dimensions. Designed to answer — at a glance — how patients rate the service,
-     which communities lead, and what drives overall satisfaction.</p>
-  <div class="meta"><span class="live"></span> Last refreshed {_now} · {len(df)} responses</div>
+  <div class="brand"><span class="dot">✚</span> Impacto Médico</div>
+  <div class="eyebrow">Salud · Reporte de Calidad SERVQUAL</div>
+  <h1>Brigadas de Salud Comunitaria — Inteligencia de Calidad del Servicio</h1>
+  <p>Calidad del servicio reportada por los pacientes en las brigadas de salud comunitaria,
+     medida con las cinco dimensiones SERVQUAL. Diseñado para responder, de un vistazo, cómo
+     califican el servicio los pacientes, qué comunidades destacan y qué impulsa la satisfacción general.</p>
+  <div class="meta"><span class="live"></span> Actualizado {_now} · {len(df)} respuestas</div>
 </div>
 """, unsafe_allow_html=True)
 
 if f.empty:
-    st.markdown("<div class='limit'><div class='i'>⚠</div><div>No responses match the selected "
-                "filters. Widen the filters in the sidebar.</div></div>", unsafe_allow_html=True)
+    st.markdown("<div class='limit'><div class='i'>⚠</div><div>Ninguna respuesta coincide con los "
+                "filtros seleccionados. Amplía los filtros en la barra lateral.</div></div>", unsafe_allow_html=True)
     st.stop()
 
 # ---- KPIs ----
@@ -236,34 +236,34 @@ n_comm = f.comunidad.nunique()
 n_resp = len(f)
 
 def chip(cls, txt): return f"<span class='chip {cls}'>{txt}</span>"
-sq_chip = chip("chip-pos","Excellent") if servqual >= 4.3 else (chip("chip-neu","Good") if servqual>=3.8 else chip("chip-warn","Low"))
-sat_chip = chip("chip-pos","High") if satis >= 4.3 else chip("chip-neu","Mid")
-rec_chip = chip("chip-pos","Strong") if recommend >= 90 else chip("chip-warn","Watch")
+sq_chip = chip("chip-pos","Excelente") if servqual >= 4.3 else (chip("chip-neu","Buena") if servqual>=3.8 else chip("chip-warn","Baja"))
+sat_chip = chip("chip-pos","Alta") if satis >= 4.3 else chip("chip-neu","Media")
+rec_chip = chip("chip-pos","Fuerte") if recommend >= 90 else chip("chip-warn","Atención")
 
-st.markdown("<div class='sec'><span class='bar'></span><h2>Quality KPIs</h2>"
-            f"<span class='hint'>{n_resp} of {len(df)} responses in view</span></div>", unsafe_allow_html=True)
+st.markdown("<div class='sec'><span class='bar'></span><h2>KPIs de Calidad</h2>"
+            f"<span class='hint'>{n_resp} de {len(df)} respuestas en vista</span></div>", unsafe_allow_html=True)
 st.markdown(f"""
 <div class="kpi-grid">
   <div class="kpi"><span class="accent"></span>
-    <div class="top"><span class="label">SERVQUAL Score</span><span class="ico">◎</span></div>
+    <div class="top"><span class="label">Índice SERVQUAL</span><span class="ico">◎</span></div>
     <div class="val">{servqual:.2f}<span style="font-size:14px;color:{MUTED}"> / 5</span></div>
-    <div class="sub">{sq_chip} overall service quality</div></div>
+    <div class="sub">{sq_chip} calidad general del servicio</div></div>
   <div class="kpi"><span class="accent"></span>
-    <div class="top"><span class="label">Overall Satisfaction</span><span class="ico">★</span></div>
+    <div class="top"><span class="label">Satisfacción General</span><span class="ico">★</span></div>
     <div class="val">{satis:.2f}<span style="font-size:14px;color:{MUTED}"> / 5</span></div>
-    <div class="sub">{sat_chip} patient-reported</div></div>
+    <div class="sub">{sat_chip} reportada por pacientes</div></div>
   <div class="kpi"><span class="accent"></span>
-    <div class="top"><span class="label">Would Recommend</span><span class="ico">♥</span></div>
+    <div class="top"><span class="label">Recomendaría</span><span class="ico">♥</span></div>
     <div class="val">{recommend:.1f}%</div>
-    <div class="sub">{rec_chip} "yes" + "probably yes"</div></div>
+    <div class="sub">{rec_chip} "sí" + "creo que sí"</div></div>
   <div class="kpi"><span class="accent"></span>
-    <div class="top"><span class="label">Communities</span><span class="ico">⌂</span></div>
+    <div class="top"><span class="label">Comunidades</span><span class="ico">⌂</span></div>
     <div class="val">{n_comm}</div>
-    <div class="sub">{chip('chip-neu','Coverage')} in current view</div></div>
+    <div class="sub">{chip('chip-neu','Cobertura')} en vista actual</div></div>
   <div class="kpi"><span class="accent"></span>
-    <div class="top"><span class="label">Responses</span><span class="ico">▤</span></div>
+    <div class="top"><span class="label">Respuestas</span><span class="ico">▤</span></div>
     <div class="val">{n_resp}</div>
-    <div class="sub">{chip('chip-neu','Sample')} survey records</div></div>
+    <div class="sub">{chip('chip-neu','Muestra')} registros de encuesta</div></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -271,73 +271,73 @@ st.markdown(f"""
 dim_means = f[FACTORS].mean().rename(index=FACTOR_LABEL)
 best_dim, worst_dim = dim_means.idxmax(), dim_means.idxmin()
 comm_q = f.groupby('comunidad')['SERVQUAL AVG'].mean().sort_values(ascending=False)
-st.markdown("<div class='sec'><span class='bar'></span><h2>Key Insights</h2>"
-            "<span class='hint'>auto-generated · descriptive, non-causal</span></div>", unsafe_allow_html=True)
+st.markdown("<div class='sec'><span class='bar'></span><h2>Hallazgos Clave</h2>"
+            "<span class='hint'>generado automáticamente · descriptivo, no causal</span></div>", unsafe_allow_html=True)
 st.markdown(f"""
 <div class="ins-grid">
-  <div class="ins"><div class="k">✚ Strongest dimension</div>
-    <div class="t">{best_dim} leads service quality</div>
-    <div class="d">Highest-rated SERVQUAL dimension at {dim_means.max():.2f}/5 in the current selection.</div></div>
-  <div class="ins"><div class="k">✚ Improvement area</div>
-    <div class="t">{worst_dim} is the lowest dimension</div>
-    <div class="d">Lowest-rated at {dim_means.min():.2f}/5 — the clearest opportunity to raise overall quality.</div></div>
-  <div class="ins"><div class="k">✚ Top community</div>
-    <div class="t">{comm_q.index[0]} rates highest</div>
-    <div class="d">Leads at {comm_q.iloc[0]:.2f}/5; lowest is {comm_q.index[-1]} at {comm_q.iloc[-1]:.2f}/5.</div></div>
+  <div class="ins"><div class="k">✚ Dimensión más fuerte</div>
+    <div class="t">{best_dim} lidera la calidad del servicio</div>
+    <div class="d">Dimensión SERVQUAL mejor calificada con {dim_means.max():.2f}/5 en la selección actual.</div></div>
+  <div class="ins"><div class="k">✚ Área de mejora</div>
+    <div class="t">{worst_dim} es la dimensión más baja</div>
+    <div class="d">Peor calificada con {dim_means.min():.2f}/5 — la oportunidad más clara para elevar la calidad general.</div></div>
+  <div class="ins"><div class="k">✚ Comunidad líder</div>
+    <div class="t">{comm_q.index[0]} tiene la mejor calificación</div>
+    <div class="d">Lidera con {comm_q.iloc[0]:.2f}/5; la más baja es {comm_q.index[-1]} con {comm_q.iloc[-1]:.2f}/5.</div></div>
 </div>
 """, unsafe_allow_html=True)
 
 # ---- analytics ----
-st.markdown("<div class='sec'><span class='bar'></span><h2>Analytics</h2>"
-            "<span class='hint'>dimensions · communities · demographics</span></div>", unsafe_allow_html=True)
+st.markdown("<div class='sec'><span class='bar'></span><h2>Analítica</h2>"
+            "<span class='hint'>dimensiones · comunidades · demografía</span></div>", unsafe_allow_html=True)
 col1, col2 = st.columns(2, gap="large")
 
 # Chart 1 — SERVQUAL by dimension
 with col1:
-    st.markdown("<div class='card'><div class='h'><span class='ttl'>Average Score by SERVQUAL Dimension</span>"
+    st.markdown("<div class='card'><div class='h'><span class='ttl'>Puntaje Promedio por Dimensión SERVQUAL</span>"
                 "<span class='tag'>1–5</span></div>", unsafe_allow_html=True)
     dm = f[FACTORS].mean().rename(index=FACTOR_LABEL).sort_values(ascending=False)
     fig, ax = plt.subplots(figsize=(5.4, 3.2)); style_ax(ax)
     bars = ax.bar(dm.index, dm.values, color=NAVY, width=.66, zorder=3); bars[0].set_color(ACCENT)
-    ax.set_ylim(0, 5); ax.set_ylabel("Mean score"); plt.xticks(rotation=20, ha='right'); plt.tight_layout()
+    ax.set_ylim(0, 5); ax.set_ylabel("Puntaje medio"); plt.xticks(rotation=20, ha='right'); plt.tight_layout()
     st.pyplot(fig, use_container_width=True)
-    st.markdown(f"<div class='note'><b>{dm.idxmax()}</b> is the highest-rated dimension ({dm.max():.2f}/5); "
-                f"<b>{dm.idxmin()}</b> the lowest ({dm.min():.2f}/5). Descriptive only.</div></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='note'><b>{dm.idxmax()}</b> es la dimensión mejor calificada ({dm.max():.2f}/5); "
+                f"<b>{dm.idxmin()}</b> la más baja ({dm.min():.2f}/5). Solo descriptivo.</div></div>", unsafe_allow_html=True)
 
 # Chart 2 — SERVQUAL by community
 with col2:
-    st.markdown("<div class='card'><div class='h'><span class='ttl'>Service Quality by Community</span>"
+    st.markdown("<div class='card'><div class='h'><span class='ttl'>Calidad del Servicio por Comunidad</span>"
                 "<span class='tag'>SERVQUAL AVG</span></div>", unsafe_allow_html=True)
     cq = f.groupby('comunidad')['SERVQUAL AVG'].mean().sort_values()
     fig, ax = plt.subplots(figsize=(5.4, 3.2)); style_ax(ax); ax.grid(axis="y", visible=False); ax.grid(axis="x", visible=True)
     ax.barh(cq.index, cq.values, color=SLATE, zorder=3)
     ax.patches[-1].set_color(TEAL)
-    ax.set_xlim(0, 5); ax.set_xlabel("Mean SERVQUAL"); plt.tight_layout()
+    ax.set_xlim(0, 5); ax.set_xlabel("SERVQUAL medio"); plt.tight_layout()
     st.pyplot(fig, use_container_width=True)
-    st.markdown(f"<div class='note'><b>{cq.index[-1]}</b> rates highest ({cq.iloc[-1]:.2f}); "
-                f"<b>{cq.index[0]}</b> lowest ({cq.iloc[0]:.2f}). Means per community.</div></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='note'><b>{cq.index[-1]}</b> tiene la calificación más alta ({cq.iloc[-1]:.2f}); "
+                f"<b>{cq.index[0]}</b> la más baja ({cq.iloc[0]:.2f}). Promedios por comunidad.</div></div>", unsafe_allow_html=True)
 
 # Chart 3 — Satisfaction by state
-st.markdown("<div class='card'><div class='h'><span class='ttl'>Overall Satisfaction by State</span>"
+st.markdown("<div class='card'><div class='h'><span class='ttl'>Satisfacción General por Estado</span>"
             "<span class='tag'>mean</span></div>", unsafe_allow_html=True)
 stt = f.groupby('Estado_Comunidad')[TARGET].mean().sort_values(ascending=False)
 fig, ax = plt.subplots(figsize=(11, 3.2)); style_ax(ax)
 bars = ax.bar(stt.index, stt.values, color=NAVY, width=.5, zorder=3); bars[0].set_color(ACCENT)
-ax.set_ylim(0, 5); ax.set_ylabel("Mean satisfaction")
+ax.set_ylim(0, 5); ax.set_ylabel("Satisfacción media")
 for i, v in enumerate(stt.values): ax.text(i, v + .07, f"{v:.2f}", ha='center', fontsize=9, color=INK)
 plt.tight_layout(); st.pyplot(fig, use_container_width=True)
-st.markdown(f"<div class='note'><b>{stt.index[0]}</b> reports the highest mean satisfaction ({stt.iloc[0]:.2f}/5) "
-            f"and <b>{stt.index[-1]}</b> the lowest ({stt.iloc[-1]:.2f}/5) in the current filter.</div></div>",
+st.markdown(f"<div class='note'><b>{stt.index[0]}</b> reporta la satisfacción media más alta ({stt.iloc[0]:.2f}/5) "
+            f"and <b>{stt.index[-1]}</b> la más baja ({stt.iloc[-1]:.2f}/5) en el filtro actual.</div></div>",
             unsafe_allow_html=True)
 
 # Extra analytics
-with st.expander("More analytics · dimension correlation heatmap"):
+with st.expander("Más analítica · mapa de calor de correlaciones"):
     st.markdown(f"<div style='font-size:14px;font-weight:700;color:{INK};margin-bottom:6px'>"
-                "Correlation Heatmap · SERVQUAL dimensions, satisfaction &amp; recommendation</div>",
+                "Mapa de Calor · dimensiones SERVQUAL y satisfacción</div>",
                 unsafe_allow_html=True)
     num_cols = FACTORS + ['SERVQUAL AVG', 'satisfaccion_general']
     corr = f[num_cols].corr()
-    labels = [FACTOR_LABEL.get(c, c.replace('satisfaccion_general','Satisfaction').replace('SERVQUAL AVG','SERVQUAL')) for c in num_cols]
+    labels = [FACTOR_LABEL.get(c, c.replace('satisfaccion_general','Satisfacción').replace('SERVQUAL AVG','SERVQUAL')) for c in num_cols]
     fig, ax = plt.subplots(figsize=(7, 5.4))
     im = ax.imshow(corr, cmap='Reds', vmin=0, vmax=1)
     for i in range(len(num_cols)):
@@ -349,33 +349,33 @@ with st.expander("More analytics · dimension correlation heatmap"):
     ax.set_xticklabels(labels, rotation=35, ha='right', fontsize=8); ax.set_yticklabels(labels, fontsize=8)
     ax.grid(False); fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     plt.tight_layout(); st.pyplot(fig, use_container_width=True)
-    st.markdown("<div class='note'>Higher values = dimensions that move together. The dimensions most "
-                "aligned with overall satisfaction are the strongest levers for improving it (association, not proof).</div>",
+    st.markdown("<div class='note'>Valores más altos = dimensiones que se mueven juntas. Las dimensiones más "
+                "alineadas con la satisfacción general son las palancas más fuertes para mejorarla (asociación, no prueba).</div>",
                 unsafe_allow_html=True)
 
 # ---- forecast / prediction center ----
-st.markdown("<div class='sec'><span class='bar'></span><h2>Satisfaction Predictor · What-If Center</h2>"
-            "<span class='hint'>estimate satisfaction from quality dimensions</span></div>", unsafe_allow_html=True)
+st.markdown("<div class='sec'><span class='bar'></span><h2>Predictor de Satisfacción · Centro de Escenarios</h2>"
+            "<span class='hint'>estima la satisfacción a partir de las dimensiones de calidad</span></div>", unsafe_allow_html=True)
 left, right = st.columns([1.45, 1], gap="large")
 with left:
     st.markdown("<div class='card' style='padding-bottom:18px'><div class='h'>"
-                "<span class='ttl'>Scenario inputs · SERVQUAL dimensions (1–5)</span>"
-                "<span class='tag'>9 inputs</span></div>", unsafe_allow_html=True)
+                "<span class='ttl'>Entradas del escenario · dimensiones SERVQUAL (1–5)</span>"
+                "<span class='tag'>9 entradas</span></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        f1 = st.slider("Tangibles", 1.0, 5.0, 4.5, 0.25)
-        f2 = st.slider("Reliability", 1.0, 5.0, 4.5, 0.25)
-        f3 = st.slider("Responsiveness", 1.0, 5.0, 4.4, 0.25)
-        f4 = st.slider("Assurance", 1.0, 5.0, 4.6, 0.25)
-        f5 = st.slider("Empathy", 1.0, 5.0, 4.4, 0.25)
+        f1 = st.slider("Tangibilidad", 1.0, 5.0, 4.5, 0.25)
+        f2 = st.slider("Fiabilidad", 1.0, 5.0, 4.5, 0.25)
+        f3 = st.slider("Cap. de Respuesta", 1.0, 5.0, 4.4, 0.25)
+        f4 = st.slider("Seguridad", 1.0, 5.0, 4.6, 0.25)
+        f5 = st.slider("Empatía", 1.0, 5.0, 4.4, 0.25)
     with c2:
-        reg = st.selectbox("Region", sorted(df.region.dropna().unique()),
+        reg = st.selectbox("Región", sorted(df.region.dropna().unique()),
                            index=sorted(df.region.dropna().unique()).index("Centro") if "Centro" in df.region.values else 0)
-        esc = st.selectbox("Education", sorted(df.escolaridad.dropna().unique()))
-        gen = st.selectbox("Gender", sorted(df.genero.dropna().unique()))
-        est = st.selectbox("State", sorted(df.Estado_Comunidad.dropna().unique()),
+        esc = st.selectbox("Escolaridad", sorted(df.escolaridad.dropna().unique()))
+        gen = st.selectbox("Género", sorted(df.genero.dropna().unique()))
+        est = st.selectbox("Estado", sorted(df.Estado_Comunidad.dropna().unique()),
                            index=sorted(df.Estado_Comunidad.dropna().unique()).index("Puebla") if "Puebla" in df.Estado_Comunidad.values else 0)
-    go = st.button("✚  Predict Satisfaction", type="primary")
+    go = st.button("✚  Predecir Satisfacción", type="primary")
     st.markdown("</div>", unsafe_allow_html=True)
 
 scenario = pd.DataFrame([{
@@ -385,49 +385,49 @@ scenario = pd.DataFrame([{
 }])
 pred = float(model.predict(scenario[FACTORS + CAT_FEATURES])[0])
 pred = max(1.0, min(5.0, pred))  # display-clamp to the 1–5 scale
-level = "High" if pred >= 4.3 else ("Moderate" if pred >= 3.5 else "Low")
-lc = "#16A34A" if level == "High" else ("#F59E0B" if level == "Moderate" else "#DC2626")
+level = "Alta" if pred >= 4.3 else ("Moderada" if pred >= 3.5 else "Baja")
+lc = "#16A34A" if level == "Alta" else ("#F59E0B" if level == "Moderada" else "#DC2626")
 with right:
     st.markdown(f"""
     <div class="fc-wrap"><div class="fc-value">
-      <div class="lab">Predicted Satisfaction</div>
+      <div class="lab">Satisfacción Prevista</div>
       <div class="big">{pred:.2f}<span style="font-size:20px;color:#F5B5BE"> / 5</span></div>
       <div class="pill"><span style="width:8px;height:8px;border-radius:50%;background:{lc};display:inline-block"></span>
-        {level} expected satisfaction</div>
+        satisfacción esperada {level}</div>
       <div style="margin-top:14px;font-size:12.5px;color:#F5B5BE;line-height:1.5">
-        In-sample model · R² {metrics['r2']:.3f} · typical error ≈ {s(metrics['mae'])} points.
-        Directional estimate, not a validated guarantee.</div>
+        Modelo en muestra · R² {metrics['r2']:.3f} · error típico ≈ {s(metrics['mae'])} puntos.
+        Estimación orientativa, no una garantía validada.</div>
     </div></div>
     """, unsafe_allow_html=True)
-st.markdown(f"<div class='note' style='border:0;padding-top:10px'>This profile implies "
-            f"<b>{level.lower()}</b> expected satisfaction (<b>{pred:.2f}/5</b>). The dimensions with the "
-            f"largest model weight move this estimate the most — prioritise those to raise satisfaction.</div>",
+st.markdown(f"<div class='note' style='border:0;padding-top:10px'>Este perfil implica "
+            f"una satisfacción esperada <b>{level.lower()}</b> (<b>{pred:.2f}/5</b>). Las dimensiones con "
+            f"mayor peso en el modelo mueven más esta estimación — priorízalas para elevar la satisfacción.</div>",
             unsafe_allow_html=True)
 
 # ---- model summary + limitation ----
-st.markdown("<div class='sec'><span class='bar'></span><h2>Model Summary</h2></div>", unsafe_allow_html=True)
+st.markdown("<div class='sec'><span class='bar'></span><h2>Resumen del Modelo</h2></div>", unsafe_allow_html=True)
 mc1, mc2, mc3 = st.columns(3, gap="large")
-for c, lab, val in [(mc1, "In-sample R²", f"{metrics['r2']:.3f}"),
-                    (mc2, "In-sample MAE", s(metrics['mae'])),
-                    (mc3, "In-sample RMSE", s(metrics['rmse']))]:
+for c, lab, val in [(mc1, "R² en muestra", f"{metrics['r2']:.3f}"),
+                    (mc2, "MAE en muestra", s(metrics['mae'])),
+                    (mc3, "RMSE en muestra", s(metrics['rmse']))]:
     c.markdown(f"<div class='kpi'><span class='accent'></span>"
                f"<div class='top'><span class='label'>{lab}</span><span class='ico'>∑</span></div>"
-               f"<div class='val'>{val}</div><div class='sub'>full-dataset fit</div></div>", unsafe_allow_html=True)
+               f"<div class='val'>{val}</div><div class='sub'>ajuste con todos los datos</div></div>", unsafe_allow_html=True)
 st.markdown(
     f"<p style='color:{SLATE};font-size:13.5px;line-height:1.6;margin:16px 2px 12px'>"
-    f"The model predicts <b style='color:{INK}'>overall satisfaction</b> from the five SERVQUAL dimensions "
-    f"plus region, education, gender and state. It explains about "
-    f"<b style='color:{INK}'>{metrics['r2']*100:.0f}%</b> of the variation in satisfaction, with a typical "
-    f"error of about <b style='color:{INK}'>{s(metrics['mae'])}</b> points on the 1–5 scale. Ratings are very "
-    f"high and clustered near the top, which naturally limits how much variation any model can explain.</p>",
+    f"El modelo predice la <b style='color:{INK}'>satisfacción general</b> a partir de las cinco dimensiones SERVQUAL "
+    f"más región, escolaridad, género y estado. Explica alrededor del "
+    f"<b style='color:{INK}'>{metrics['r2']*100:.0f}%</b> de la variación en la satisfacción, con un "
+    f"error típico de <b style='color:{INK}'>{s(metrics['mae'])}</b> puntos en la escala de 1–5. Las calificaciones son muy "
+    f"altas y se concentran cerca del máximo, lo que limita naturalmente cuánta variación puede explicar cualquier modelo.</p>",
     unsafe_allow_html=True)
 st.markdown(
-    "<div class='limit'><div class='i'>⚠</div><div><b>Limitation.</b> These regression metrics are "
-    "<b>in-sample</b> — the model was trained on the full dataset with <b>no train/test split</b>. They describe "
-    "fit to this survey and must not be treated as validated future accuracy. Survey scores are self-reported and "
-    "skewed high, so results are directional, not causal.</div></div>", unsafe_allow_html=True)
+    "<div class='limit'><div class='i'>⚠</div><div><b>Limitación.</b> Estas métricas de regresión son "
+    "<b>en muestra</b> — el modelo se entrenó con todos los datos <b>sin división train/test</b>. Describen "
+    "el ajuste a esta encuesta y no deben tomarse como precisión futura validada. Los puntajes son autoreportados y "
+    "están sesgados al alza, por lo que los resultados son orientativos, no causales.</div></div>", unsafe_allow_html=True)
 st.markdown(
     f"<div style='text-align:center;color:{MUTED};font-size:12px;margin-top:26px;"
     f"padding-top:16px;border-top:1px solid {LINE}'>"
-    "Medical Impact · SERVQUAL Service-Quality Study &nbsp;·&nbsp; metrics are in-sample</div>",
+    "Impacto Médico · Estudio de Calidad SERVQUAL &nbsp;·&nbsp; métricas en muestra</div>",
     unsafe_allow_html=True)
